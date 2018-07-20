@@ -37,7 +37,7 @@ def login():
         password = request.form['password']
         for x in accounts:
             if x['username'] == username and x['password'] == password:
-                return render_template('signup.html')
+                return render_template('feed.html')
             else:
                 pass
     return render_template('login.html')
