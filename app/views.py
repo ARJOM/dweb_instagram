@@ -4,13 +4,17 @@ import psycopg2
 import psycopg2.extras
 from flask import g, request, render_template
 from app import app
-
-'''lista_filmes = ['Star Wars', 'Toy Story', 'Taxi Driver']'''
+from flask_sqlalchemy import SQLAlchemy
+'''from flask.ext.uploads import UploadSet, configure_uploads, IMAGES'''
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Connect database
 # g = http://flask.pocoo.org/docs/1.0/api/#flask.g
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+'''
+photos = UploadSet('photos', IMAGES)
+configure_uploads(app, photos)
+'''
 conn = psycopg2.connect("dbname=instagram user=postgres password=flasknao host=127.0.0.1")
 cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
@@ -38,16 +42,33 @@ def login():
         for x in accounts:
             if x['username'] == username and x['password'] == password:
                 return render_template('feed.html')
-            else:
-                pass
+        return render_template('login.html', error='usuario nao existe')
     return render_template('login.html')
+
+@app.route('/upload', methods=['POST'])
+def upload():
+    file = request.files['inputFile']
+    return file.filename
 '''
-    if request.method == 'GET':
-        return render_template('login.html')
-    else:
-        if request.form['user'] == 'gustavo':
-            return render_template('login.html', error='usuario nao existe')
-        else:
-            print( request.form['user'], request.form['password'] )
-            return redirect(url_for('filmes'))
+@app.route('/feed', methods=['GET', 'POST'])
+def upload():
+    if request.method == 'POST' and 'photo' in request.files:
+        filename = photos.save(request.files['photo'])
+        rec = Photo(filename=filename, user=g.user.id)
+        rec.store()
+        flash("Photo saved.")
+        return redirect(url_for('show', id=rec.id))
+        return filename
+    return render_template('upload.html')
+
+@app.route('/comment', methods=['GET', 'POST'])
+def comment():
+    if (request.method == 'POST'):
+        id = request.form['id']
+        date_c = request.form['date_c']
+        comment = request.form['comment']
+        id_photo = request.form['id_photo']
+        cur.execute("INSERT INTO comment(id, date_c, comment, id_photo) VALUES (%s, %s, '%s', %s)" %(id, date_c, comment, id_photo))
+        conn.commit()
+    return render_template('home.html')
 '''

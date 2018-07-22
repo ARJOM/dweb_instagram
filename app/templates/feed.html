@@ -1,23 +1,31 @@
 {% extends 'index.html'%}
 
 {% block content%}
-<section class="container">
-  <div class="row">
-    <div class="col-sm-6">
-      <img src="https://s3.amazonaws.com/codecademy-content/projects/make-a-website/lesson-4/kitchen.jpg">
-    </div>
-    <div class="col-sm-6">
-      <img src="https://s3.amazonaws.com/codecademy-content/projects/make-a-website/lesson-4/woodwork.jpg">
-    </div>
-    <div class="col-sm-6">
-      <img src="https://s3.amazonaws.com/codecademy-content/projects/make-a-website/lesson-4/gifts.jpg">
-    </div>
-    <div class="col-sm-6">
-      <img src="https://s3.amazonaws.com/codecademy-content/projects/make-a-website/lesson-4/antique.jpg">
-    </div>
+<div style="display: grid; grid-gap: 50px; margin: 50px; margin-top: 50px; flex-direction: column;">
+  <div>
+    <img style="width: 400px; height: 250px;" src="https://s3.amazonaws.com/codecademy-content/projects/make-a-website/lesson-4/kitchen.jpg">
+    <br>
+    <br>
+    <textarea name="message" id="message"></textarea>
+    <form method= 'POST'>
+      <button type="submit" class="btn btn-default">submit</button>
+    </form>
+    <form method="POST" action="/upload" enctype="multipart/form-data">
+      <input type="file" name="inputFile">
+    <button type="submit" class="btn btn-default">submit</button>
+    </form>
+    <!-- <form>
+      <div class="form-group">
+        <label for="exampleFormControlFile1">Example file input</label>
+        <input type="file" class="form-control-file" id="exampleFormControlFile1">
+      </div>
+    </form> -->
+    <!-- <form method=POST enctype=multipart/form-data>
+      <input type=file name=photo>
+      <input type="submit">
+    </form>
+    <a href="/comment"> <button style="margin: 0 auto;" type="submit" class="btn btn-primary">comment</button> </a> -->
+    <!-- <a href="#" title="Love it" class="btn btn-counter" data-count="0"><span>&#x2764;</span></a> -->
   </div>
-  <div class="row text-center">
-    <a class="btn btn-secondary" href="#">View Complete Catalogue</a>
-  </div>
-</section>
+</div>
 {% endblock %}
