@@ -10,6 +10,7 @@ CREATE TABLE photo (
 	date_p date NOT NULL,
 	description text NOT NULL,
 	client_p varchar(255) NOT NULL,
+	way text NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY (client_p) REFERENCES client(account)
 );
