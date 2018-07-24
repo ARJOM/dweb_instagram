@@ -6,19 +6,25 @@
     <img style="width: 350px; height: 250px;" src="http://www.lifeboxset.com/wp-content/uploads/2013/12/the-neighbourhood-12-11-630x630.jpg">
     <br>
     <br>
-    <textarea name="comment" rows="1" cols="45"></textarea>
-    <div class="form-inline">
-      <form method='POST'>
+    <div style="display: inline-block;">
+      {% if username %}
+      <form method='POST' action="comment">
+        <textarea name="comment" rows="1" cols="20"></textarea>
         <button type="submit" class="btn btn-default">comment</button>
+      </form>
+      <form method='POST' action="like">
         <button type="submit" class="btn btn-default">like</button>
       </form>
+      {% endif %}
     </div>
     <br>
     <br>
-    <form method="POST" action="/upload" enctype="multipart/form-data">
-      <input type="file" name="inputFile">
-    <button type="submit" name='description' class="btn btn-default">submit</button>
-    </form>
+      <form method="POST" action="/upload" enctype="multipart/form-data">
+        <input type="file" name="inputFile">
+        <button type="submit" name='description' class="btn btn-default">submit</button>
+      </form>
+    </div>
+</div>
     <!-- <form>
       <div class="form-group">
         <label for="exampleFormControlFile1">Example file input</label>

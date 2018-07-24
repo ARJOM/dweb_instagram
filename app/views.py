@@ -2,7 +2,7 @@
 
 import psycopg2
 import psycopg2.extras
-from flask import g, request, render_template, session
+from flask import g, request, redirect, render_template, session
 from app import app
 from datetime import date
 from werkzeug.utils import secure_filename
@@ -27,6 +27,16 @@ cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 def index():
     return render_template('home.html')
 
+@app.route('/feed', methods=['GET'])
+def feed():
+    # passar user por parametro template
+    return render_template('feed_aut.html', username=session['username'])
+
+@app.route('/logout', methods=['GET'])
+def logout():
+    session['username'] = None
+    return redirect('feed')
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if (request.method == 'POST'):
@@ -48,7 +58,7 @@ def login():
         for x in accounts:
             if x['username'] == username and x['password'] == password:
                 session['username'] = request.form['username']
-                return render_template('feed_aut.html')
+                return redirect('feed')
         return render_template('login.html', error='usuario nao existe')
     return render_template('login.html')
 
@@ -61,21 +71,8 @@ def comment():
         cur.execute("INSERT INTO comment(date_c, comment, id_photo) VALUES (now, comment, id_photo)")
         conn.commit()
     if 'username' in session:
-        return render_template('feed_aut.html')
+        return redirect('feed')
     return render_template('feed_naut.html')
-
-#@app.route('/upload', methods=['POST'])
-#def upload():
-#    file = request.files['inputFile']
-#    return file.filename
-
-
-#@app.route('/upload', methods=['GET', 'POST'])
-#def upload():
-#    if request.method == 'POST' and 'photo' in request.files:
-#        filename = photos.save(request.files['photo'])
-#        return filename
-#    return render_template('upload.html')
 
 @app.route('/post', methods=['GET', 'POST'])
 def upload_file():
@@ -99,9 +96,10 @@ def upload_file():
             conn.commit()
             return redirect(url_for('uploaded_file', filename=filename))
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/like', methods=['GET', 'POST'])
 def like():
     now = date.today()
     if request.method == 'POST':
-        cur.execute("INSERT INTO lik(u_user, photo) VALUES ('%s', '%s')" %(u_user, photo))
+        cur.execute("INSERT INTO lik(u_user, photo) VALUES ('%s', '%s')" %(session['username'], filename))
         conn.commit()
+        return redirect('feed')
