@@ -5,8 +5,8 @@
   <h3>@{{user}}</h3>
   <p>Seguidores: {{seguidores}} - Seguindo: {{seguindo}}</p>
   {% if user != session['username'] %}
-  <form method="post">
-    <button type="submit" class="btn btn-default">Seguir</button>
+  <form method="GET" action="/follow/{{user}}">
+    <button type="submit" name="follow" class="btn btn-default">Seguir</button>
   </form>
   {% endif %}
   {% for post in posts %}

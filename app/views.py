@@ -6,22 +6,13 @@ from flask import g, request, redirect, render_template, session
 from app import app
 from datetime import date
 import base64
-from werkzeug.utils import secure_filename
-
-UPLOAD_FOLDER = '/static/images'
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
-
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Connect database
 # g = http://flask.pocoo.org/docs/1.0/api/#flask.g
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-conn = psycopg2.connect("dbname=instagram user=postgres password=flasknao host=127.0.0.1")
+conn = psycopg2.connect("dbname=instagram user=postgres password=1234 host=127.0.0.1")
 cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
 @app.route('/')
@@ -48,6 +39,17 @@ def home(username):
         comments = cur.fetchall()
         post.append(comments)
     return render_template('profile.html', posts=posts, foll=foll, seguidores=nfoll, seguindo=nfull, user = username)
+
+@app.route('/follow/<path:username>', methods=['GET'])
+def follow(username):
+    my_username = session['username']
+    cur.execute("SELECT COUNT(*) FROM followers WHERE followed ILIKE '%s' AND follower ILIKE '%s'" %(username, my_username))
+    seguindo = cur.fetchone()[0]
+    if seguindo == 0:
+        cur.execute("INSERT INTO followers(followed, follower) VALUES ('%s', '%s')" %(username, my_username))
+        conn.commit()
+    return redirect('profile/{0}'.format(username))
+
 
 @app.route('/feed', methods=['GET'])
 def feed():

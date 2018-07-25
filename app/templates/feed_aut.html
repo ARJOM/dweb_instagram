@@ -36,7 +36,7 @@
     <div class="form-post">
       {% if username != None %}
       <form method="POST" action="/post" enctype="multipart/form-data">
-        <input type="file" name="file">
+        <input type="file" name="file" accept="image/*"
         <br/>
         <textarea name="description" cols="30" rows="3"></textarea>
         <button type="submit" name='description' class="btn btn-default">submit</button>
