@@ -41,4 +41,3 @@ CREATE TABLE lik (
 	FOREIGN KEY (u_user) REFERENCES client(username),
 	FOREIGN KEY (photo) REFERENCES photo(id)
 );
-

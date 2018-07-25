@@ -1,0 +1,38 @@
+{% extends 'index.html'%}
+
+{% block content %}
+
+  <h3>@{{user}}</h3>
+  <p>Seguidores: {{seguidores}} - Seguindo: {{seguindo}}</p>
+  {% if user != session['username'] %}
+  <form method="post">
+    <button type="submit" class="btn btn-default">Seguir</button>
+  </form>
+  {% endif %}
+  {% for post in posts %}
+  <div class="post" style="display: grid; grid-gap: 50px; margin: 50px; margin-top: 50px; flex-direction: column;">
+    <a href="like/{{post[0]}}"><img src="data:image/png;base64,{{post[4]}}" width="300px" height="200px"></a>
+    <p>{{post[1]}} -  {{post[5]}} Likes</p>
+    <p>{{post[2]}}</p>
+    <div class="post-details">
+      <p>Comentários:</p>
+      {% for comment in post[6] %}
+      <p>@{{comment[4]}} - {{comment[1]}}</p>
+      <p>{{comment[2]}}</p>
+      {% endfor %}
+    </div>
+    <div style="display: inline-block;">
+      {% if username != None %}d
+      <form method='post' action="comment">
+        <input type="hidden" name="idPhoto" value="{{post[0]}}" />
+        <textarea name="comment" rows="1" cols="20"></textarea>
+        <button type="submit" class="btn btn-default">comment</button>
+      </form>
+      {% endif %}
+    </div>
+    <br/>
+    <br/>
+  </div>
+  {% endfor %}
+
+{% endblock %}

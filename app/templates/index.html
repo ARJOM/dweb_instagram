@@ -12,15 +12,14 @@
 	<body style="font-family: 'Billabong'";>
 		<div style="">
 	    <nav class="navbar navbar-light bg-light">
-	      <a class="navbar-brand" href="/home">
+	      <a class="navbar-brand" href="/index">
 	        <img src="https://banner2.kisspng.com/20180324/zkq/kisspng-logo-computer-icons-instagram-5ab6f47c8a24a4.5628261715219395805658.jpg" width="30" height="30" class="d-inline-block align-top" alt="">
 	          | Instagram
 				</a>
-				
-				{% if username != None %} 
+				{% if username != None %}
 				<a href="/logout">Sair</a>
 				{% endif %}
-				{% if username == None %} 
+				{% if username == None %}
 				<a href="/login">Entrar</a>
 				<a href="/signup">Criar Conta</a>
 				{% endif %}

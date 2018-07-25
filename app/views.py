@@ -21,20 +21,40 @@ def allowed_file(filename):
 # g = http://flask.pocoo.org/docs/1.0/api/#flask.g
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-conn = psycopg2.connect("dbname=instagram user=postgres password=1234 host=127.0.0.1")
+conn = psycopg2.connect("dbname=instagram user=postgres password=flasknao host=127.0.0.1")
 cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
 @app.route('/')
 def index():
+    session['username'] = None
     return render_template('home.html')
+
+@app.route('/profile/<path:username>', methods=['GET', 'POST'])
+def home(username):
+    user = username
+    cur.execute("SELECT id, date_p, description, client_p, way FROM photo WHERE client_p = '%s'" %(user))
+    posts = cur.fetchall()
+    cur.execute("SELECT follower FROM followers WHERE followed = '%s'" %(user))
+    foll = cur.fetchall()
+    nfoll = len(foll)
+    cur.execute("SELECT followed FROM followers WHERE follower = '%s'" %(user))
+    full = cur.fetchall()
+    nfull = len(full)
+    for post in posts:
+        cur.execute("SELECT COUNT(*) FROM lik WHERE photo = '%s'" % post[0])
+        likes = cur.fetchone()
+        post.append(likes[0])
+        cur.execute("SELECT * FROM comment WHERE id_photo = '%s'" % post[0])
+        comments = cur.fetchall()
+        post.append(comments)
+    return render_template('profile.html', posts=posts, foll=foll, seguidores=nfoll, seguindo=nfull, user = username)
 
 @app.route('/feed', methods=['GET'])
 def feed():
-    # passar user por parametro template
     username = session['username']
     cur.execute("SELECT id, date_p, description, client_p, way FROM photo WHERE client_p <> '%s'" %(username))
     posts = cur.fetchall()
-    for post in posts: 
+    for post in posts:
         cur.execute("SELECT COUNT(*) FROM lik WHERE photo = '%s'" % post[0])
         likes = cur.fetchone()
         post.append(likes[0])
@@ -42,7 +62,6 @@ def feed():
         comments = cur.fetchall()
         post.append(comments)
     return render_template('feed_aut.html', username=session['username'], posts=posts)
-    # '<img src="data:image/png;base64,' + photo + '">'
 
 @app.route('/logout', methods=['GET'])
 def logout():
@@ -53,11 +72,11 @@ def logout():
 def signup():
     if (request.method == 'POST'):
         account = request.form['account']
-        username = session['username']
+        username = request.form['username']
         password = request.form['password']
         cur.execute("INSERT INTO client(account, username, password) VALUES ('%s', '%s', '%s')" %(account, username, password))
         conn.commit()
-        return login()
+        return redirect('login')
     return render_template('signup.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -65,6 +84,7 @@ def login():
     if (request.method == 'POST'):
         cur.execute("SELECT * FROM client;")
         accounts = cur.fetchall()
+        #username = session['username']
         username = request.form['username']
         password = request.form['password']
         for x in accounts:
@@ -86,7 +106,7 @@ def comment():
         conn.commit()
     if 'username' in session:
         return redirect('feed')
-    return render_template('feed_naut.html')
+    return render_template('feed_aut.html')
 
 @app.route('/post', methods=['GET', 'POST'])
 def upload_file():
@@ -110,7 +130,7 @@ def like(idPhoto):
         username = session['username']
         cur.execute("SELECT COUNT(*) FROM lik WHERE photo = '%s' and u_user = '%s'" %(id_photo, username))
         quantidadeLikes = cur.fetchone()
-        if quantidadeLikes[0] == 1 : 
+        if quantidadeLikes[0] == 1 :
             return redirect('feed')
         else :
             cur.execute("INSERT INTO lik(u_user, photo) VALUES ('%s', '%s')" %(session['username'], id_photo))
