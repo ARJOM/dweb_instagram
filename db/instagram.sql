@@ -27,8 +27,10 @@ CREATE TABLE comment (
 	date_c date NOT NULL,
 	comment varchar(255) NOT NULL,
 	id_photo integer NOT NULL,
+	username VARCHAR(30) NOT NULL,
 	PRIMARY KEY (id),
-	FOREIGN KEY (id_photo) REFERENCES photo(id)
+	FOREIGN KEY (id_photo) REFERENCES photo(id),
+	FOREIGN KEY (username) REFERENCES client(username)
 );
 
 CREATE TABLE lik (
@@ -39,3 +41,4 @@ CREATE TABLE lik (
 	FOREIGN KEY (u_user) REFERENCES client(username),
 	FOREIGN KEY (photo) REFERENCES photo(id)
 );
+

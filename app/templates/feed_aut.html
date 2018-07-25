@@ -1,42 +1,62 @@
-{% extends 'index.html'%}
-
-{% block content%}
+{% extends 'index.html'%} {% block content%}
 <div style="display: grid; grid-gap: 50px; margin: 50px; margin-top: 50px; flex-direction: column;">
   <div>
-    <img style="width: 350px; height: 250px;" src="http://www.lifeboxset.com/wp-content/uploads/2013/12/the-neighbourhood-12-11-630x630.jpg">
+    <div class="posts">
+      {% for post in posts %}
+      <div class="post">
+        <a href="like/{{post[0]}}"><img src="data:image/png;base64,{{post[4]}}" width="300px" height="200px"></a>
+        <p>{{post[1]}} - @{{post[3]}} - {{post[5]}} Likes</p>
+        <p>{{post[2]}}</p>
+        <div class="post-details">
+          <p>Comentários:</p>
+          {% for comment in post[6] %}
+          <p>@{{comment[4]}} - {{comment[1]}}</p>
+          <p>{{comment[2]}}</p>
+          {% endfor %}
+        </div>
+        <div style="display: inline-block;">
+          {% if username != None %}
+          <form method='post' action="comment">
+            <input type="hidden" name="idPhoto" value="{{post[0]}}" />
+            <textarea name="comment" rows="1" cols="20"></textarea>
+            <button type="submit" class="btn btn-default">comment</button>
+          </form>
+          <!-- <form method='POST' action="like">
+            <input type="hidden" name="idPhoto" value="{{post[0]}}" />
+            <button type="submit" class="btn btn-default">like</button>
+          </form> -->
+          {% endif %}
+        </div>
+        <br/>
+        <br/>
+      </div>
+      {% endfor %}
+    </div>
     <br>
-    <br>
-    <div style="display: inline-block;">
-      {% if username %}
-      <form method='POST' action="comment">
-        <textarea name="comment" rows="1" cols="20"></textarea>
-        <button type="submit" class="btn btn-default">comment</button>
-      </form>
-      <form method='POST' action="like">
-        <button type="submit" class="btn btn-default">like</button>
+    <div class="form-post">
+      {% if username != None %}
+      <form method="POST" action="/post" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <br/>
+        <textarea name="description" cols="30" rows="3"></textarea>
+        <button type="submit" name='description' class="btn btn-default">submit</button>
       </form>
       {% endif %}
     </div>
-    <br>
-    <br>
-      <form method="POST" action="/upload" enctype="multipart/form-data">
-        <input type="file" name="inputFile">
-        <button type="submit" name='description' class="btn btn-default">submit</button>
-      </form>
-    </div>
+  </div>
 </div>
-    <!-- <form>
+<!-- <form>
       <div class="form-group">
         <label for="exampleFormControlFile1">Example file input</label>
         <input type="file" class="form-control-file" id="exampleFormControlFile1">
       </div>
     </form> -->
-    <!-- <form method=POST enctype=multipart/form-data>
+<!-- <form method=POST enctype=multipart/form-data>
       <input type=file name=photo>
       <input type="submit">
     </form>
     <a href="/comment"> <button style="margin: 0 auto;" type="submit" class="btn btn-primary">comment</button> </a> -->
-    <!-- <a href="#" title="Love it" class="btn btn-counter" data-count="0"><span>&#x2764;</span></a> -->
-  </div>
+<!-- <a href="#" title="Love it" class="btn btn-counter" data-count="0"><span>&#x2764;</span></a> -->
+</div>
 </div>
 {% endblock %}
